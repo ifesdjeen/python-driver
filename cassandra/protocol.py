@@ -391,6 +391,7 @@ class StartupMessage(_MessageType):
     KNOWN_OPTION_KEYS = set((
         'CQL_VERSION',
         'COMPRESSION',
+        'NO_COMPACT'
     ))
 
     def __init__(self, cqlversion, options):

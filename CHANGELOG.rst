@@ -6,6 +6,11 @@ Bug Fixes
 ---------
 * Cython upgrade has broken stable version of cassandra-driver (PYTHON-656)
 
+Features
+--------
+
+* Add `NO_COMPACT` startup option (PYTHON-839).
+
 3.7.0
 =====
 September 13, 2016

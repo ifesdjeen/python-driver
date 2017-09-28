@@ -197,6 +197,7 @@ class Connection(object):
     out_buffer_size = 4096
 
     cql_version = None
+    no_compact = False
     protocol_version = MAX_SUPPORTED_VERSION
 
     keyspace = None
@@ -252,7 +253,7 @@ class Connection(object):
 
     def __init__(self, host='127.0.0.1', port=9042, authenticator=None,
                  ssl_options=None, sockopts=None, compression=True,
-                 cql_version=None, protocol_version=MAX_SUPPORTED_VERSION, is_control_connection=False,
+                 cql_version=None, no_compact=False, protocol_version=MAX_SUPPORTED_VERSION, is_control_connection=False,
                  user_type_map=None, connect_timeout=None, allow_beta_protocol_version=False):
         self.host = host
         self.port = port
@@ -266,6 +267,7 @@ class Connection(object):
         self.user_type_map = user_type_map
         self.connect_timeout = connect_timeout
         self.allow_beta_protocol_version = allow_beta_protocol_version
+        self.no_compact = no_compact
         self._push_watchers = defaultdict(set)
         self._requests = {}
         self._iobuf = io.BytesIO()
@@ -625,7 +627,7 @@ class Connection(object):
                       "specified", id(self), self.host)
             self._compressor = None
             self.cql_version = DEFAULT_CQL_VERSION
-            self._send_startup_message()
+            self._send_startup_message(no_compact=self.no_compact)
         else:
             log.debug("Sending initial options message for new connection (%s) to %s", id(self), self.host)
             self.send_msg(OptionsMessage(), self.get_request_id(), self._handle_options_response)
@@ -691,14 +693,16 @@ class Connection(object):
                 self._compressor, self.decompressor = \
                     locally_supported_compressions[compression_type]
 
-        self._send_startup_message(compression_type)
+        self._send_startup_message(compression_type, no_compact=self.no_compact)
 
     @defunct_on_error
-    def _send_startup_message(self, compression=None):
+    def _send_startup_message(self, compression=None, no_compact=False):
         log.debug("Sending StartupMessage on %s", self)
         opts = {}
         if compression:
             opts['COMPRESSION'] = compression
+        if no_compact:
+            opts['NO_COMPACT'] = 'true'
         sm = StartupMessage(cqlversion=self.cql_version, options=opts)
         self.send_msg(sm, self.get_request_id(), cb=self._handle_startup_response)
         log.debug("Sent StartupMessage on %s", self)
