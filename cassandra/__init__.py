@@ -92,6 +92,11 @@ class ConsistencyLevel(object):
     one response.
     """
 
+    NODELOCAL = 11
+    """
+    Executes request on the local replica only
+    """
+    
 ConsistencyLevel.value_to_name = {
     ConsistencyLevel.ANY: 'ANY',
     ConsistencyLevel.ONE: 'ONE',
@@ -103,7 +108,8 @@ ConsistencyLevel.value_to_name = {
     ConsistencyLevel.EACH_QUORUM: 'EACH_QUORUM',
     ConsistencyLevel.SERIAL: 'SERIAL',
     ConsistencyLevel.LOCAL_SERIAL: 'LOCAL_SERIAL',
-    ConsistencyLevel.LOCAL_ONE: 'LOCAL_ONE'
+    ConsistencyLevel.LOCAL_ONE: 'LOCAL_ONE',
+    ConsistencyLevel.NODELOCAL: 'NODELOCAL'    
 }
 
 ConsistencyLevel.name_to_value = {
@@ -117,7 +123,8 @@ ConsistencyLevel.name_to_value = {
     'EACH_QUORUM': ConsistencyLevel.EACH_QUORUM,
     'SERIAL': ConsistencyLevel.SERIAL,
     'LOCAL_SERIAL': ConsistencyLevel.LOCAL_SERIAL,
-    'LOCAL_ONE': ConsistencyLevel.LOCAL_ONE
+    'LOCAL_ONE': ConsistencyLevel.LOCAL_ONE,
+    'NODELOCAL': ConsistencyLevel.NODELOCAL
 }
 
 
